@@ -5,34 +5,35 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
-    public float moveSpeed = 5f;
+    public float MOVE_SPEED = 5f;
 
-    public Rigidbody2D rb;
-    public Animator animator;
+    public Rigidbody2D RIGID_BODY;
+    public Animator ANIMATOR;
+    public ConsoleView CONSOLE;
 
-
-    Vector2 movement;
-    Vector2 direction;
+    Vector2 MOVEMENT;
 
     // Update is called once per frame
     void Update() // Input
     {
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
-            
-        /*  TO-DO
-         *  Add way to remember direction so the character doesn't face forward after moving backwards?
-         */
+        if (!CONSOLE.VIEW_CONTAINER.activeSelf)
+        {
+            MOVEMENT.x = Input.GetAxisRaw("Horizontal");
+            MOVEMENT.y = Input.GetAxisRaw("Vertical");
 
-        animator.SetFloat("Horizontal", movement.x);
-        animator.SetFloat("Vertical", movement.y);
-        animator.SetFloat("Speed", movement.sqrMagnitude);
+            /*  TO-DO
+             *  Add way to remember direction so the character doesn't face forward after moving backwards?
+             */
 
+            ANIMATOR.SetFloat("Horizontal", MOVEMENT.x);
+            ANIMATOR.SetFloat("Vertical", MOVEMENT.y);
+            ANIMATOR.SetFloat("Speed", MOVEMENT.sqrMagnitude);
+        }
     }
 
     private void FixedUpdate() // Movement
     {
-        rb.MovePosition(rb.position + (movement * moveSpeed * Time.fixedDeltaTime));
+        RIGID_BODY.MovePosition(RIGID_BODY.position + (MOVEMENT * MOVE_SPEED * Time.fixedDeltaTime));
     }
 
 }

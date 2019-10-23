@@ -64,7 +64,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\CameraMovement.cs" />
+    <Compile Include="Assets\ConsoleController.cs" />
+    <Compile Include="Assets\ConsoleView.cs" />
     <Compile Include="Assets\PlayerMovement.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Example\AssetCredits.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Calendar\ButtonEventData.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Calendar\Calendar.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Calendar\CalendarButton.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Collections\Groupbox.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Collections\ListBox.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Collections\TabControl.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Collections\Table.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Cursors\GameCursor.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Cursors\IngameCursor.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Data Managers\MessageBox\MessageBoxData.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Data Managers\MessageBox\MessageboxExample.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Data Managers\MessageBox\MessageResponse.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Data Managers\ProgressBar.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Data Managers\Tooltip\Tooltip.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Data Managers\Tooltip\TooltipModal.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Helpers\Draggable.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Helpers\UIFocus.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Selections\Combobox.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Selections\OptionSelector.cs" />
+    <Compile Include="Assets\UITools\UI Tools\Scripts\Selections\RadioButtonGroup.cs" />
     <None Include="Assets\Dungeon Crawler 2D Art Pack\Spine Projects\ExportedForUnity\Character\Front\CharacterFront.atlas.txt" />
     <None Include="Assets\Dungeon Crawler 2D Art Pack\Spine Projects\ExportedForUnity\Monster1\Back\Monster1Back.atlas.txt" />
     <None Include="Assets\Dungeon Crawler 2D Art Pack\Spine Projects\ExportedForUnity\Monster2\Left\Monster2Left.atlas.txt" />

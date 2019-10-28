@@ -7,6 +7,7 @@ using Entity = LevelController.LevelEntity; // Aliasing Level Entities to make c
 public class GearScript : Entity
 {
     public Entity TARGET_ENTITY;
+    public GameObject GEAR;
     private void Update()
     {
         transform.Rotate(new Vector3(0, 0, 45) * Time.deltaTime);
@@ -21,6 +22,7 @@ public class GearScript : Entity
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
         TARGET_ENTITY.setHookActive();
-        CONSOLE.displayMessage(TARGET_ENTITY.name + " IS ACTIVE");
+        GEAR.SetActive(false);
+        CONSOLE.displayMessage(TARGET_ENTITY.name.ToUpper() + " IS ACTIVE");
     }
 }

@@ -317,6 +317,9 @@
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/16.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
+    <Reference Include="FSharp.Core">
+      <HintPath>C:/Users/ej199/Documents/GitHub/Advanced-Programming/Advanced Programming Project/Assets/Frameworks/FSharp.Core.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor.Advertisements">
       <HintPath>C:/Users/ej199/Documents/GitHub/Advanced-Programming/Advanced Programming Project/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
     </Reference>

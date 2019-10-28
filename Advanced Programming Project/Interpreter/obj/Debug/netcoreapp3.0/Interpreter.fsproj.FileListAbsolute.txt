@@ -1,0 +1,8 @@
+C:\Users\ej199\Documents\GitHub\Assets\Frameworks\netcoreapp3.0\Interpreter.deps.json
+C:\Users\ej199\Documents\GitHub\Assets\Frameworks\netcoreapp3.0\Interpreter.dll
+C:\Users\ej199\Documents\GitHub\Assets\Frameworks\netcoreapp3.0\Interpreter.pdb
+C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Interpreter\obj\Debug\netcoreapp3.0\Interpreter.fsprojAssemblyReference.cache
+C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Interpreter\obj\Debug\netcoreapp3.0\Interpreter.AssemblyInfoInputs.cache
+C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Interpreter\obj\Debug\netcoreapp3.0\Interpreter.AssemblyInfo.fs
+C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Interpreter\obj\Debug\netcoreapp3.0\Interpreter.dll
+C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Interpreter\obj\Debug\netcoreapp3.0\Interpreter.pdb

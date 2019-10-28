@@ -131,7 +131,6 @@ public class ConsoleView : MonoBehaviour
     public void runCommand()
     {
         CONSOLE.runCommandString(INPUT_FIELD.text);
-        CONSOLE.appendLogLine("$ " + INPUT_FIELD.text);
         INPUT_FIELD.text = "";
     }
 }

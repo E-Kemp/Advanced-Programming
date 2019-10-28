@@ -18,7 +18,7 @@ public class LevelController : MonoBehaviour
 
         protected abstract void OnTriggerEnter2D(Collider2D collision);
 
-        public void setHookActive() { active = true; }
+        public virtual void setHookActive() { active = true; }
     }
 
     public LevelEntity getEntity(string hook)

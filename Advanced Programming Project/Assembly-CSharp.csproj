@@ -66,6 +66,9 @@
     <Compile Include="Assets\CameraMovement.cs" />
     <Compile Include="Assets\ConsoleController.cs" />
     <Compile Include="Assets\ConsoleView.cs" />
+    <Compile Include="Assets\DoorScript.cs" />
+    <Compile Include="Assets\GearScript.cs" />
+    <Compile Include="Assets\LevelController.cs" />
     <Compile Include="Assets\PlayerMovement.cs" />
     <Compile Include="Assets\UITools\UI Tools\Example\AssetCredits.cs" />
     <Compile Include="Assets\UITools\UI Tools\Scripts\Calendar\ButtonEventData.cs" />

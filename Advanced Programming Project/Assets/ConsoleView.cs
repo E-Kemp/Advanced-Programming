@@ -5,16 +5,18 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using Entity = LevelController.LevelEntity; // Aliasing Level Entities to make coding easier
 
 public class ConsoleView : MonoBehaviour
 {
     ConsoleController CONSOLE = new ConsoleController(); // Object of the custom controller class!!
 
-    bool DID_SHOW = true;
+    bool DID_SHOW = false;
 
     public GameObject VIEW_CONTAINER; //Container for console view, should be a child of this GameObject
     public Text LOG_TEXT_AREA, MESSAGE_BOX;
     public InputField INPUT_FIELD;
+    public LevelController LEVEL_CONTROLLER;
 
     private Color PINK = new Color(0.8666667f, 0.1568628f, 1, 1);
 
@@ -24,7 +26,8 @@ public class ConsoleView : MonoBehaviour
         {
             CONSOLE.visibilityChanged += onVisibilityChanged;
             CONSOLE.logChanged += onLogChanged;
-            CONSOLE.messageChanged += onNewMessage;
+            CONSOLE.screenMessage += displayMessage;
+            CONSOLE.entityChanged += entityChanged;
         }
         updateLogStr(CONSOLE.log);
         setVisibility(false);
@@ -34,7 +37,7 @@ public class ConsoleView : MonoBehaviour
     {
         CONSOLE.visibilityChanged += onVisibilityChanged;
         CONSOLE.logChanged += onLogChanged;
-        CONSOLE.messageChanged += onNewMessage;
+        CONSOLE.screenMessage += displayMessage;
     }
 
     void Update()
@@ -92,7 +95,7 @@ public class ConsoleView : MonoBehaviour
         }
     }
 
-    void onNewMessage(string message)
+    public void displayMessage(string message)
     {
         StartCoroutine(messageTransition(message)); // Start method that returns an IEnumerator (allows for wait times)
     }
@@ -111,13 +114,24 @@ public class ConsoleView : MonoBehaviour
         }
     }
 
+
+    public void entityChanged(string[] args)
+    {
+        if(args.Length == 1)
+        {
+            Entity ent = LEVEL_CONTROLLER.getEntity(args[0]);
+            ent.consoleTrigger(null);
+        }
+    }
+
+
     /// 
     /// Event that should be called by anything wanting to submit the current input to the console.
     /// 
     public void runCommand()
     {
         CONSOLE.runCommandString(INPUT_FIELD.text);
+        CONSOLE.appendLogLine("$ " + INPUT_FIELD.text);
         INPUT_FIELD.text = "";
     }
-
 }

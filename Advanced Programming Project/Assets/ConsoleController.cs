@@ -22,11 +22,14 @@ public class ConsoleController
     public event VisibilityChangedHandler visibilityChanged;
 
     public delegate void MessageChangedHandler(string message);
-    public event MessageChangedHandler messageChanged;
+    public event MessageChangedHandler screenMessage;
+
+    public delegate void EntityInteractionHandler(string[] args);
+    public event EntityInteractionHandler entityChanged;
     #endregion
 
 
-    /// Object to hold information about each command
+    /// Nested class to hold information about each command
     /// command - actual command entered in console
     /// handler - method name in code
     /// help - description of the command (for the help menu)
@@ -44,10 +47,8 @@ public class ConsoleController
         }
     }
 
-    /// 
-    /// How many log lines should be retained?
-    /// Note that strings submitted to appendLogLine with embedded newlines will be counted as a single line.
-    /// 
+
+
     const int scrollbackSize = 20;
 
     Queue<string> scrollback = new Queue<string>(scrollbackSize);
@@ -67,6 +68,7 @@ public class ConsoleController
         registerCommand("reload", reload, "Reload game.");
         registerCommand("resetprefs", resetPrefs, "Reset & saves PlayerPrefs.");
         registerCommand("history", history, "Prints the entire history of this session into the console.");
+        registerCommand("object", obj, "Interact with an object!");
     }
 
 
@@ -91,6 +93,11 @@ public class ConsoleController
         {
             logChanged(log);
         }
+    }
+    
+    public void displayMessage(string msg)
+    {
+        screenMessage(msg);
     }
 
 
@@ -144,9 +151,6 @@ public class ConsoleController
     }
 
 
-
-
-
     #region Command handlers
 
 
@@ -166,13 +170,20 @@ public class ConsoleController
             }
             output += "'";
             appendLogLine(output);
-            messageChanged(output);
+            screenMessage(output);
         }
         else appendLogLine("No arguments to echo!");
     }
     
     public void help(string[] args)
     {
+        if (args == null || args.Length == 0)
+        {
+            foreach(CommandRegistration com in commands.Values)
+            {
+                appendLogLine(com.command + ": " + com.help);
+            }
+        }
         if (args.Length == 1)
         {
             CommandRegistration reg = commands[args[0]];
@@ -210,6 +221,13 @@ public class ConsoleController
         {
             appendLogLine(str);
         }
+    }
+
+
+    /// Object specific command handlers (temporary until interpreter is done)
+    public void obj(string[] args)
+    {
+        entityChanged(args);
     }
 
     #endregion

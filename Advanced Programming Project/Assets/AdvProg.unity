@@ -378,8 +378,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ENT_LIST:
-  - {fileID: 288414019}
   - {fileID: 1168049559}
+  - {fileID: 288414019}
   CONSOLE: {fileID: 1259849263}
 --- !u!210 &175028657
 SortingGroup:
@@ -416,8 +416,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11d7737b78f80ac428c4d6afc34801cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NAME: TOP_DOOR
-  HOOK: TOP_DOOR
+  NAME: 
+  HOOK: 
   active: 0
   CONSOLE: {fileID: 1259849263}
   DOOR1: {fileID: 1284400080}
@@ -1097,7 +1097,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 449662823}
-  offset: {x: 0, y: 0, z: -10}
+  offset: {x: 0, y: 0, z: -5}
 --- !u!1 &973561279 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1479743685881330, guid: 89c34bf03e751b346b5b806a385f7ed9,

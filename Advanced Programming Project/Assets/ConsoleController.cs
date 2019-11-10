@@ -7,7 +7,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+using Interpreter;
+using Microsoft.FSharp.Collections;
+using System.Text;
+using System.Linq;
 
 public delegate void CommandHandler(string[] args);
 
@@ -56,6 +59,7 @@ public class ConsoleController
     Stack<string> commandHistory = new Stack<string>();
     Dictionary<string, CommandRegistration> commands = new Dictionary<string, CommandRegistration>();
 
+
     public string[] log { get; private set; }
 
     const string repeatCmdName = "!!";
@@ -70,6 +74,9 @@ public class ConsoleController
         registerCommand("resetprefs", resetPrefs, "Reset & saves PlayerPrefs.");
         registerCommand("history", history, "Prints the entire history of this session into the console.");
         registerCommand("object", obj, "Interact with an object!");
+
+
+        registerCommand("test", test, "For testing purposes");
     }
 
 
@@ -83,7 +90,7 @@ public class ConsoleController
     {
         Debug.Log(line);
 
-        if (scrollback.Count >= ConsoleController.scrollbackSize)
+        if (scrollback.Count >= scrollbackSize)
         {
             scrollback.Dequeue();
         }
@@ -229,6 +236,18 @@ public class ConsoleController
     public void obj(string[] args)
     {
         entityChanged(args);
+    }
+
+    public void test(string[] args)
+    {
+        List<Token> fsList = Lexer.getTokens(String.Join(" ", args)).ToList();
+
+        StringBuilder str = new StringBuilder();
+
+        foreach(Token token in fsList)
+            str.Append(Lexer.printToken(token));
+
+        appendLogLine(str.ToString());
     }
 
     #endregion

@@ -240,7 +240,7 @@ public class ConsoleController
 
     public void test(string[] args)
     {
-        List<Token> fsList = Lexer.getTokens(String.Join(" ", args)).ToList();
+        List<Token> fsList = Lexer.getTokens(String.Join(" ", args)).ToList(); //converts F# list to C# list
 
         StringBuilder str = new StringBuilder();
 

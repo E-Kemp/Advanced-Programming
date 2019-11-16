@@ -104,3 +104,6 @@ C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Projec
 C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Assets\Interpreter\bin\Debug\UnityEngine.UnityWebRequestModule.xml
 C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Assets\Interpreter\bin\Debug\UnityEngine.VideoModule.xml
 C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Assets\Interpreter\bin\Debug\UnityEngine.XRModule.xml
+C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Assets\Interpreter\bin\Debug\Assembly-CSharp.dll
+C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Assets\Interpreter\bin\Debug\Assembly-CSharp.pdb
+C:\Users\ej199\Documents\GitHub\Advanced-Programming\Advanced Programming Project\Assets\Interpreter\obj\Debug\Interpreter.fsprojAssemblyReference.cache

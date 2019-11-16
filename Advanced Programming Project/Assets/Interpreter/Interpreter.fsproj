@@ -46,7 +46,6 @@
     <Compile Include="Interpreter.fs" />
     <None Include="Script.fsx" />
     <Content Include="packages.config" />
-    <Compile Include="Test.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

@@ -1,8 +1,9 @@
 ﻿namespace Interpreter
+open Unity
 open System
 open System.Text.RegularExpressions
-open UnityEngine
 
+//type Ent = LevelController.LevelEntity //Abbreviating entities
 
 type Operator =
     | ADD
@@ -13,89 +14,77 @@ type Value =
     | START
     | END
 and Expr =
-    | IF
-    | FOR
-
+    | AND
 type Token =
     | OP of Operator
     | VA of Value
     | EX of Expr
     | NULL
 
+type Tree =
+    | Node1 of Node
+    | Leaf of Token
+and Node = { token:Token; child:Tree[] }
+
 (*
 Lexer module to tokenise a given string of code form the game
 *)
-module Lexer =
-    //let (|Regex|_|) pattern input =
-    //    let m = Regex.Match(input, pattern)
-    //    if m.Success then Some(List.tail [ for g in m.Groups -> g.Value ])
-    //    else None
-    
-    
-    let rec getVar(str:string, cstr:string) =
+module Lexer =            
+    (* Get the keyword out of the next valid chain of alphanumeric characters *)
+    let getKeyword str =
+        let reg = Regex.Match(str, "[A-z]+")
+        match reg.Success with
+        | true -> reg.Groups.[0].Value
+        | false -> ""
+
+    let rec tokenise(str:string, tokenList) =
         if str.Length = 0 then
-            (cstr.Length, cstr)
-        else    
-            match str.[0] with
-            | ')' -> (cstr.Length, cstr)
-            | ' ' -> (cstr.Length, cstr)
-            | _ -> getVar(str.[1..], (cstr + string str.[0])) // WORK ON THIS
-
-            
-
-
-    let rec tokenise(str:string, tokenList:List<Token>) =
-        if str.Length = 0 then
-            tokenList
-
+            List.rev tokenList
         else match str.[0] with
                 | '+' ->        tokenise(str.[1..], OP(ADD) :: tokenList)
                 | '-' ->        tokenise(str.[1..], OP(SUBTRACT) :: tokenList)
                 | '(' ->        tokenise(str.[1..], VA(START) :: tokenList)
                 | ')' ->        tokenise(str.[1..], VA(END) :: tokenList)
-                | 'H' ->        if str.[0..3] = "HOOK" && str.Length >= 5 then 
-                                    let (a, b) = getVar(str.[5..], "")
-                                    Console.WriteLine a
-                                    Console.WriteLine b
-                                    Console.WriteLine str.[a..]
-                                    tokenise(str.[a..], VA(HOOK(b)) :: tokenList)
-                                else
-                                    List.rev tokenList
                 | ' ' ->        tokenise(str.[1..], tokenList)
-                | _ ->          List.rev tokenList
+                (* Go into keywords after characters *)
+                | _ ->          let s = getKeyword(str)
+                                match s with
+                                | "AND" ->   tokenise(str.[3..], EX(AND) :: tokenList)
+                                (* Nothing else -> grab the token *)
+                                | _ ->      if String.length(s) > 0 then
+                                                tokenise(str.[s.Length..], VA(HOOK(s)) :: tokenList)
+                                            else
+                                                tokenise(str.[1..], tokenList)
+                                
 
-        
 
-
-    let printToken(token:Token) =
+    let printToken token =
         match token with
             | OP(ADD) -> "(ADD)"
             | OP(SUBTRACT) -> "(SUBTRACT)"
             //| OP(_) -> "(BLANK OPERATION)"
-            | VA(HOOK(a)) -> sprintf "(HOOK: %s)" a
             | VA(START) -> "(START)"
-            | VA(END) -> "(END)"
+            | VA(END) -> "(END)"            
+            | VA(HOOK(a)) -> sprintf "(HOOK: %s)" a
+            | EX(AND) -> "(AND)"
             | _ -> "(NULL)"
     
+
+    let getTokens str =
+        tokenise(str, List.empty<Token>)
 
     let rec printTokensRec(str, tokens:List<Token>) =
         if tokens.IsEmpty = false then
             let tmp = printToken(tokens.Head)
             printTokensRec(tmp+str, tokens.[1..])
         else str
-
-    let getTokens(str:string) =
-        tokenise(str, List.empty<Token>)
-
-    let printTokensStr(str:string) = 
+    
+    let printTokens tokens =
+        printTokensRec("", List.rev tokens)
+    
+    let printTokensStr str = 
         let tokens = getTokens str
-        printTokensRec("", tokens)
-
-    let printTokens(tokens:List<Token>) =
-        printTokensRec("", tokens)
-
-
-
+        printTokens tokens
 
 
 
@@ -105,33 +94,45 @@ Parser module to parse and execute the tokens given by the lexer
 module Parser =
     let test = 0
 
+    let separateHooks tokens = 
+        tokens |> List.choose ( fun a -> match a with | VA(HOOK(b)) -> Some b | _ -> None )
 
-
-
+    let rec validateHooks(ents:List<(string * bool)>, hooks:List<string>) =
+        if List.exists (fun (a, _) -> a = hooks.[0]) ents then
+            if hooks.Length <= 1 then true else
+            validateHooks(ents, hooks.[1..])
+        else
+            false
+    
+    let rec buildTree(tokens:List<Token>, pos:int, currentTree:Tree) =
+        match tokens.[pos] with
+        | EX(AND) -> ""
+        | _ -> ""
 (*
 Interpreter module to trigger the process of interpreting code
 *)
-module Interpreter =
+module Main =
     open Lexer
     open Parser
 
-    // Mutable list of hooks
-    // Yes, I know mutables aren't pretty but this needs to be changeable in game
-    let mutable HOOKS = List.empty<(string * bool)>
+    let printEnts ents =
+        ents |> List.map<(string * bool), string> (fun (a, b) -> a + ", " + match b with | true -> "true" | false -> "false")    
+    
 
-    //Add hook to the list of hooks
-    let addHook str trigger =
-        if List.exists (fun (a, _) -> a = str) HOOKS then
-            HOOKS <- List.append HOOKS [(str, trigger)]
+
+    let interpret(str, hooks, triggers) =
+        let ents = Seq.zip hooks triggers |> List.ofSeq // First create a sequence of entities, this is cool
+        let tokens = getTokens str
+        if validateHooks(ents, separateHooks tokens) then
+            buildTree(tokens, 0, Leaf(NULL))
         else
-            Console.Write("hook already exists!")
-
-    let rec getHook str =
-        (HOOKS |> List.filter (fst >> (=) str)).[0]
-    //let getHook str = 
-    //    List.
-
-    //let interpret str:string =
-    //    let strArr = str.
-    //    let tokenList = tokenise(str.Split(' '), List.empty<Token>)
-    //    ""
+            ""
+        
+        
+        
+        
+        //(Lexer.printTokens tokens) 
+        //+ "\n" 
+        //+ (ents 
+        //    |> List.map<(string * bool), string> (fun (a,_) -> a)
+        //    |> List.fold (+) " ")

@@ -7,16 +7,19 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Interpreter;
 using Microsoft.FSharp.Collections;
 using System.Text;
 using System.Linq;
+using Inter = Interpreter.Main;
+using Entity = LevelController.LevelEntity; // Aliasing Level Entities to make coding easier
+
 
 public delegate void CommandHandler(string[] args);
 
 
 public class ConsoleController
 {
+
     #region Event declarations
     // Used to communicate with ConsoleView
     public delegate void LogChangedHandler(string[] log);
@@ -28,8 +31,11 @@ public class ConsoleController
     public delegate void MessageChangedHandler(string message);
     public event MessageChangedHandler screenMessage;
 
-    public delegate void EntityInteractionHandler(string[] args);
+    public delegate void EntityInteractionHandler(string hook);
     public event EntityInteractionHandler entityChanged;
+
+    public delegate List<Entity> HookChecker();
+    public event HookChecker hookChecker;
     #endregion
 
 
@@ -59,7 +65,7 @@ public class ConsoleController
     Stack<string> commandHistory = new Stack<string>();
     Dictionary<string, CommandRegistration> commands = new Dictionary<string, CommandRegistration>();
 
-
+    // List of hooks
     public string[] log { get; private set; }
 
     const string repeatCmdName = "!!";
@@ -235,19 +241,33 @@ public class ConsoleController
     /// Object specific command handlers (temporary until interpreter is done)
     public void obj(string[] args)
     {
-        entityChanged(args);
+        entityChanged(args[0]);
     }
 
     public void test(string[] args)
     {
-        List<Token> fsList = Lexer.getTokens(String.Join(" ", args)).ToList(); //converts F# list to C# list
-
+        //List<Token> fsList = Lexer.getTokens(string.Join(" ", args)).ToList(); //converts F# list to C# list
         StringBuilder str = new StringBuilder();
 
-        foreach(Token token in fsList)
-            str.Append(Lexer.printToken(token));
+        //foreach(Token token in fsList)
+        //    str.Append(Lexer.printToken(token));
+
+        List<string> hookList = new List<string>();
+        List<bool> trigList = new List<bool>();
+        foreach(Entity ent in hookChecker())
+        {
+            hookList.Add(ent.HOOK);
+            trigList.Add(ent.active);
+        }
+
+        string hookString = Inter.interpret(string.Join(" ", args), hookList.ToArray(), trigList.ToArray());
+
+        str.Append('\n');
+        str.Append(hookString);
 
         appendLogLine(str.ToString());
+
+        
     }
 
     #endregion

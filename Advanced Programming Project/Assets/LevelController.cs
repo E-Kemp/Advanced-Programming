@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Interpreter;
 
+
 public class LevelController : MonoBehaviour
 {
     public LevelEntity[] ENT_LIST;
@@ -32,5 +33,7 @@ public class LevelController : MonoBehaviour
         CONSOLE.displayMessage("Entity doesn't exist/isn't active!");
         throw new System.Exception("Entity doesn't exist/isn't active!");
     }
+
+
 
 }

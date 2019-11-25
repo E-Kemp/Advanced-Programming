@@ -2,7 +2,9 @@
 /// ConsoleView Class to control the view aspects fo the console.
 /// With thanks to Eliot Lash for tutorial and original code (heavily edited)
 /// 
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Entity = LevelController.LevelEntity; // Aliasing Level Entities to make coding easier
@@ -28,6 +30,7 @@ public class ConsoleView : MonoBehaviour
             CONSOLE.logChanged += onLogChanged;
             CONSOLE.screenMessage += displayMessage;
             CONSOLE.entityChanged += entityChanged;
+            CONSOLE.hookChecker += getHookList;
         }
         updateLogStr(CONSOLE.log);
         setVisibility(false);
@@ -38,6 +41,8 @@ public class ConsoleView : MonoBehaviour
         CONSOLE.visibilityChanged += onVisibilityChanged;
         CONSOLE.logChanged += onLogChanged;
         CONSOLE.screenMessage += displayMessage;
+        CONSOLE.entityChanged += entityChanged;
+        CONSOLE.hookChecker += getHookList;
     }
 
     void Update()
@@ -115,13 +120,10 @@ public class ConsoleView : MonoBehaviour
     }
 
 
-    public void entityChanged(string[] args)
+    public void entityChanged(string hook)
     {
-        if(args.Length == 1)
-        {
-            Entity ent = LEVEL_CONTROLLER.getEntity(args[0]);
-            ent.consoleTrigger(null);
-        }
+        Entity ent = LEVEL_CONTROLLER.getEntity(hook);
+        ent.consoleTrigger(null);
     }
 
 
@@ -132,5 +134,12 @@ public class ConsoleView : MonoBehaviour
     {
         CONSOLE.runCommandString(INPUT_FIELD.text);
         INPUT_FIELD.text = "";
+    }
+
+    public List<Entity> getHookList()
+    {
+        List<Entity> hookList = new List<Entity>();
+        hookList.AddRange(LEVEL_CONTROLLER.ENT_LIST);
+        return hookList;
     }
 }

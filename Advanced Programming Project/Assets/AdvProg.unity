@@ -416,8 +416,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11d7737b78f80ac428c4d6afc34801cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NAME: 
-  HOOK: 
+  NAME: Top Door
+  HOOK: TOP_DOOR
   active: 0
   CONSOLE: {fileID: 1259849263}
   DOOR1: {fileID: 1284400080}

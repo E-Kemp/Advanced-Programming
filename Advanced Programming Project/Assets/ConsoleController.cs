@@ -6,11 +6,10 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Microsoft.FSharp.Collections;
 using System.Text;
-using System.Linq;
 using Inter = Interpreter.Main;
+using Lexer = Interpreter.Lexer;
+using Token = Interpreter.Token;
 using Entity = LevelController.LevelEntity; // Aliasing Level Entities to make coding easier
 
 
@@ -31,7 +30,7 @@ public class ConsoleController
     public delegate void MessageChangedHandler(string message);
     public event MessageChangedHandler screenMessage;
 
-    public delegate void EntityInteractionHandler(string hook);
+    public delegate void EntityInteractionHandler(string hook, string[] args);
     public event EntityInteractionHandler entityChanged;
 
     public delegate List<Entity> HookChecker();
@@ -46,13 +45,13 @@ public class ConsoleController
     class CommandRegistration
     {
         public string command { get; private set; }
-        public CommandHandler handler { get; private set; }
+        public CommandHandler Handler { get; private set; }
         public string help { get; private set; }
 
         public CommandRegistration(string command, CommandHandler handler, string help)
         {
             this.command = command;
-            this.handler = handler;
+            this.Handler = handler;
             this.help = help;
         }
     }
@@ -148,13 +147,13 @@ public class ConsoleController
         else
         {
             reg = commands[command];
-            if (reg.handler == null)
+            if (reg.Handler == null)
             {
                 appendLogLine(string.Format("Unable to process command '{0}', handler was null.", command));
             }
             else
             {
-                reg.handler(args);
+                reg.Handler(args);
             }
         }
     }
@@ -201,7 +200,7 @@ public class ConsoleController
         if (args.Length == 1)
         {
             CommandRegistration reg = commands[args[0]];
-            if (reg.handler != null)
+            if (reg.Handler != null)
             {
                 appendLogLine(reg.help);
             }
@@ -241,34 +240,59 @@ public class ConsoleController
     /// Object specific command handlers (temporary until interpreter is done)
     public void obj(string[] args)
     {
-        entityChanged(args[0]);
+        entityChanged(args[0], null);
     }
 
     public void test(string[] args)
     {
-        //List<Token> fsList = Lexer.getTokens(string.Join(" ", args)).ToList(); //converts F# list to C# list
         StringBuilder str = new StringBuilder();
 
         //foreach(Token token in fsList)
         //    str.Append(Lexer.printToken(token));
 
-        List<string> hookList = new List<string>();
-        List<bool> trigList = new List<bool>();
-        foreach(Entity ent in hookChecker())
+        var hookList = new List<string>();
+        var trigList = new List<bool>();
+        foreach (Entity ent in hookChecker())
         {
             hookList.Add(ent.HOOK);
             trigList.Add(ent.active);
         }
 
-        string hookString = Inter.interpret(string.Join(" ", args), hookList.ToArray(), trigList.ToArray());
 
-        str.Append('\n');
-        str.Append(hookString);
+        var hooks = Inter.interpretStr(string.Join(" ", args), hookList, trigList);
+        
+        var tokenList = new List<Token>();
+        
+        str.Append("TEST\n");
+        foreach (Token t in hooks)
+        {
+            tokenList.Add(t);
+            str.Append(Lexer.printToken(t));
+        }
 
         appendLogLine(str.ToString());
 
-        
+        execute(tokenList);
+
     }
 
     #endregion
+
+
+
+    public void execute(List<Token> tokenList)
+    {
+        if (tokenList[0].IsVA && tokenList[1].IsOP)
+        {
+            var val = Interpreter.Parser.getHook(tokenList[0]);
+            var op = Interpreter.Parser.getOP(tokenList[1]);
+
+            //appendLogLine(val + op.ToString());
+
+            entityChanged(val, op.ToString().Split(' '));
+
+        }
+
+    }
+
 }

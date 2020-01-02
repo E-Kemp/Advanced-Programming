@@ -21,13 +21,17 @@ type Token =
     | EX of Expr
     | NULL
 
+
 type Tree =
-    | Node1 of Node
+    | Node1 of Node1
+    | Node2 of Node2
     | Leaf of Token
-and Node = { token:Token; child:Tree[] }
+and Node1 = { token:Token; child:Tree }
+and Node2 = { token:Token; lhs:Tree; rhs:Tree }
 
 (*
 Lexer module to tokenise a given string of code form the game
+(And other functionality)
 *)
 module Lexer =            
     (* Get the keyword out of the next valid chain of alphanumeric characters *)
@@ -89,11 +93,13 @@ module Lexer =
 
 
 (*
-Parser module to parse and execute the tokens given by the lexer
+Parser module to validate the inputs and build a parse tree
+Then execute the code if neccessary (unless the execution needs to be re-directed to C#)
 *)
 module Parser =
-    let test = 0
-
+    (*
+    Hook validation functions
+    *)
     let separateHooks tokens = 
         tokens |> List.choose ( fun a -> match a with | VA(HOOK(b)) -> Some b | _ -> None )
 
@@ -103,11 +109,46 @@ module Parser =
             validateHooks(ents, hooks.[1..])
         else
             false
-    
-    let rec buildTree(tokens:List<Token>, pos:int, currentTree:Tree) =
-        match tokens.[pos] with
-        | EX(AND) -> ""
+
+    let getHook token =
+        match token with 
+        | Token.VA(HOOK(x)) -> x
         | _ -> ""
+
+    let getOP token =
+        match token with
+        | Token.OP(ADD) -> true
+        | Token.OP(SUBTRACT) -> false
+        | _ -> false
+
+
+
+    (*
+    AST functions
+    (Leave this for now, move on to execution)
+    *)
+    (*
+    let rec parseTree tokens =
+        let rec buildTree tokens =
+            try // Just in case we massively screw up
+                if tokens |> List.exists (fun a -> match a with | EX(_) -> true | _ -> false) then
+                    let newpos = tokens |> List.findIndex (fun a -> match a with | EX(_) -> true | _ -> false)
+                    Node2{token=EX(AND); lhs=buildTree tokens.[..newpos]; rhs=buildTree tokens.[newpos..]}
+                
+                elif tokens |> List.exists (fun a -> match a with | OP(_) -> true | _ -> false) then
+                    let newpos = tokens |> List.findIndex (fun a -> a = EX(AND))
+                    Node1{token=EX(AND); child=buildTree tokens.[newpos..]}
+                
+                //elif 
+                
+                else Leaf(NULL)
+            with 
+                | :? System.Exception -> printfn "Incorrect Syntax!!"; Leaf(NULL)
+        buildTree(tokens)
+        *)
+
+
+
 (*
 Interpreter module to trigger the process of interpreting code
 *)
@@ -116,20 +157,23 @@ module Main =
     open Parser
 
     let printEnts ents =
-        ents |> List.map<(string * bool), string> (fun (a, b) -> a + ", " + match b with | true -> "true" | false -> "false")    
+        List.fold (fun str (lst) -> str + "\n" + lst) "" (ents 
+                |> List.map<(string * bool), string> (fun (a, b) -> a + ", " + match b with | true -> "true" | false -> "false"))
     
 
 
-    let interpret(str, hooks, triggers) =
+    let interpret str hooks triggers = // Main function of the interpreter
         let ents = Seq.zip hooks triggers |> List.ofSeq // First create a sequence of entities, this is cool
         let tokens = getTokens str
         if validateHooks(ents, separateHooks tokens) then
-            buildTree(tokens, 0, Leaf(NULL))
+            Some(tokens)
         else
-            ""
+            None
         
-        
-        
+    let interpretStr str hooks triggers = 
+        match interpret str hooks triggers with
+            | Some(x) -> x
+            | None -> NULL :: List.empty<Token>
         
         //(Lexer.printTokens tokens) 
         //+ "\n" 

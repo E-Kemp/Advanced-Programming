@@ -120,10 +120,10 @@ public class ConsoleView : MonoBehaviour
     }
 
 
-    public void entityChanged(string hook)
+    public void entityChanged(string hook, string[] args)
     {
         Entity ent = LEVEL_CONTROLLER.getEntity(hook);
-        ent.consoleTrigger(null);
+        ent.consoleTrigger(args);
     }
 
 

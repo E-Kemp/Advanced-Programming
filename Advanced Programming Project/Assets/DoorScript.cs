@@ -10,7 +10,7 @@ public class DoorScript : LevelController.LevelEntity
 
     public override bool consoleTrigger(string[] args)
     {
-        if(!open)
+        if(args[0] == "True" && !open)
         {
             CONSOLE.displayMessage("Open!");
             DOOR1.transform.Translate(-0.5f, 0, 0);
@@ -18,7 +18,7 @@ public class DoorScript : LevelController.LevelEntity
             COLLIDER.isTrigger = true;
             return open = true;
         }
-        if(open)
+        if(args[0] == "False" && open)
         {
             CONSOLE.displayMessage("Close!");
             DOOR1.transform.Translate(0.5f, 0, 0);

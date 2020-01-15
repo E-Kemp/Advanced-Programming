@@ -7,13 +7,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Entity = LevelController.LevelEntity; // Aliasing Level Entities to make coding easier
+using UnityEngine.EventSystems;
+using Entity = LevelController.Entity; // Aliasing Level Entities to make coding easier
 
 public class ConsoleView : MonoBehaviour
 {
-    ConsoleController CONSOLE = new ConsoleController(); // Object of the custom controller class!!
+    public delegate void ScriptHandler(string str);
+    public event ScriptHandler scriptEvent;
 
-    bool DID_SHOW = false;
+    ConsoleController CONTROLLER = new ConsoleController(); // Object of the custom controller class!!
+
+    bool SHOW = false;
 
     public GameObject VIEW_CONTAINER; //Container for console view, should be a child of this GameObject
     public Text LOG_TEXT_AREA, MESSAGE_BOX;
@@ -24,25 +28,21 @@ public class ConsoleView : MonoBehaviour
 
     void Start()
     {
-        if (CONSOLE != null)
+        if (CONTROLLER != null)
         {
-            CONSOLE.visibilityChanged += onVisibilityChanged;
-            CONSOLE.logChanged += onLogChanged;
-            CONSOLE.screenMessage += displayMessage;
-            CONSOLE.entityChanged += entityChanged;
-            CONSOLE.hookChecker += getHookList;
+            CONTROLLER.logChanged += onLogChanged;
+            CONTROLLER.screenMessage += displayMessage;
+            CONTROLLER.script += script;
         }
-        updateLogStr(CONSOLE.log);
-        setVisibility(false);
+        updateLogStr(CONTROLLER.log);
+        VIEW_CONTAINER.SetActive(false);
     }
 
     ~ConsoleView()
     {
-        CONSOLE.visibilityChanged += onVisibilityChanged;
-        CONSOLE.logChanged += onLogChanged;
-        CONSOLE.screenMessage += displayMessage;
-        CONSOLE.entityChanged += entityChanged;
-        CONSOLE.hookChecker += getHookList;
+        CONTROLLER.logChanged += onLogChanged;
+        CONTROLLER.screenMessage += displayMessage;
+        CONTROLLER.script += script;
     }
 
     void Update()
@@ -50,37 +50,15 @@ public class ConsoleView : MonoBehaviour
         //Toggle visibility when tilde key pressed
         if (Input.GetKeyUp("`"))
         {
-            toggleVisibility();
-        }
-
-        //Toggle visibility when 5 fingers touch.
-        if (Input.touches.Length == 5)
-        {
-            if (!DID_SHOW)
+            VIEW_CONTAINER.SetActive(!VIEW_CONTAINER.activeSelf);
+            if (VIEW_CONTAINER.activeSelf)
+                keepActive();
+            else
             {
-                toggleVisibility();
-                DID_SHOW = true;
+                INPUT_FIELD.DeactivateInputField();
             }
+                
         }
-        else
-        {
-            DID_SHOW = false;
-        }
-    }
-
-    void toggleVisibility()
-    {
-        setVisibility(!VIEW_CONTAINER.activeSelf);
-    }
-
-    void setVisibility(bool visible)
-    {
-        VIEW_CONTAINER.SetActive(visible);
-    }
-
-    void onVisibilityChanged(bool visible)
-    {
-        setVisibility(visible);
     }
 
     void onLogChanged(string[] newLog)
@@ -120,10 +98,9 @@ public class ConsoleView : MonoBehaviour
     }
 
 
-    public void entityChanged(string hook, string[] args)
+    public void appendConsoleLogLine(string message)
     {
-        Entity ent = LEVEL_CONTROLLER.getEntity(hook);
-        ent.consoleTrigger(args);
+        CONTROLLER.appendLogLine(message);
     }
 
 
@@ -132,14 +109,21 @@ public class ConsoleView : MonoBehaviour
     /// 
     public void runCommand()
     {
-        CONSOLE.runCommandString(INPUT_FIELD.text);
+        CONTROLLER.runCommandString(INPUT_FIELD.text);
         INPUT_FIELD.text = "";
+        keepActive();
     }
 
-    public List<Entity> getHookList()
+    public void keepActive()
     {
-        List<Entity> hookList = new List<Entity>();
-        hookList.AddRange(LEVEL_CONTROLLER.ENT_LIST);
-        return hookList;
+        INPUT_FIELD.ActivateInputField();
+        INPUT_FIELD.text = "";
+        INPUT_FIELD.Select();
     }
+
+    public void script(string str)
+    {
+        scriptEvent(str);
+    }
+
 }

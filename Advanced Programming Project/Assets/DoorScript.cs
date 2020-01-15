@@ -1,26 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class DoorScript : LevelController.LevelEntity
+public class DoorScript : LevelController.Entity
 {
     public GameObject DOOR1, DOOR2, DOOR3;
     public BoxCollider2D COLLIDER;
-    bool open = false;
+    public CircleCollider2D TRIG_COLLIDER;
+    protected bool open = false;
+    public int NEXT_SCENE_INDEX;
 
-    public override bool consoleTrigger(string[] args)
+    public override bool trigger(string[] args)
     {
-        if(args[0] == "True" && !open)
+        if(args[0] == "True" && !open && active)
         {
-            CONSOLE.displayMessage("Open!");
+            sendMessage("Open!");
             DOOR1.transform.Translate(-0.5f, 0, 0);
             DOOR2.transform.Translate(0.5f, 0, 0);
             COLLIDER.isTrigger = true;
             return open = true;
         }
-        if(args[0] == "False" && open)
+        if(args[0] == "False" && open && active)
         {
-            CONSOLE.displayMessage("Close!");
+            sendMessage("Close!");
             DOOR1.transform.Translate(0.5f, 0, 0);
             DOOR2.transform.Translate(-0.5f, 0, 0);
             COLLIDER.isTrigger = false;
@@ -31,7 +34,7 @@ public class DoorScript : LevelController.LevelEntity
 
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        throw new System.NotImplementedException();
+        SceneManager.LoadScene(NEXT_SCENE_INDEX); //Will only work in full build, watch a tutorial for this later
     }
 
     public override void setHookActive()

@@ -12,27 +12,35 @@ public class PlayerMovement : MonoBehaviour
     public ConsoleView CONSOLE;
 
     Vector2 MOVEMENT;
+    Vector2 DIRECTION;
 
     // Update is called once per frame
-    void Update() // Input
+    void Update()
     {
         if (!CONSOLE.VIEW_CONTAINER.activeSelf)
         {
             MOVEMENT.x = Input.GetAxisRaw("Horizontal");
             MOVEMENT.y = Input.GetAxisRaw("Vertical");
 
-            /*  TO-DO
-             *  Add way to remember direction so the character doesn't face forward after moving backwards?
-             */
+            //if (MOVEMENT.x == 1)
+            //    DIRECTION.x = 1;
+            //if (MOVEMENT.x == -1)
+            //    DIRECTION.x = -1;
+            //if (MOVEMENT.y == 1)
+            //    DIRECTION.y = 1;
+            //if (MOVEMENT.y == -1)
+            //    DIRECTION.y = -1;
 
             ANIMATOR.SetFloat("Horizontal", MOVEMENT.x);
             ANIMATOR.SetFloat("Vertical", MOVEMENT.y);
             ANIMATOR.SetFloat("Speed", MOVEMENT.sqrMagnitude);
+
         }
     }
 
     private void FixedUpdate() // Movement
     {
+
         RIGID_BODY.MovePosition(RIGID_BODY.position + (MOVEMENT * MOVE_SPEED * Time.fixedDeltaTime));
     }
 

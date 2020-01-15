@@ -1,6 +1,6 @@
 ﻿namespace Interpreter
-open Unity
-open System
+//open Unity
+//open System
 open System.Text.RegularExpressions
 
 //type Ent = LevelController.LevelEntity //Abbreviating entities
@@ -36,7 +36,7 @@ Lexer module to tokenise a given string of code form the game
 module Lexer =            
     (* Get the keyword out of the next valid chain of alphanumeric characters *)
     let getKeyword str =
-        let reg = Regex.Match(str, "[A-z]+")
+        let reg = Regex.Match(str, "[A-z|0-9]+")
         match reg.Success with
         | true -> reg.Groups.[0].Value
         | false -> ""

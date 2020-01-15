@@ -67,8 +67,11 @@
     <Compile Include="Assets\ConsoleController.cs" />
     <Compile Include="Assets\ConsoleView.cs" />
     <Compile Include="Assets\DoorScript.cs" />
+    <Compile Include="Assets\GearLightScript.cs" />
     <Compile Include="Assets\GearScript.cs" />
     <Compile Include="Assets\LevelController.cs" />
+    <Compile Include="Assets\LightPuzzleScript.cs" />
+    <Compile Include="Assets\LightScript.cs" />
     <Compile Include="Assets\PlayerMovement.cs" />
     <Compile Include="Assets\UITools\UI Tools\Example\AssetCredits.cs" />
     <Compile Include="Assets\UITools\UI Tools\Scripts\Calendar\ButtonEventData.cs" />
@@ -328,9 +331,6 @@
     </Reference>
     <Reference Include="UnityEngine.SpatialTracking">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.4.10f1/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
-    </Reference>
-    <Reference Include="FSharp.Core">
-      <HintPath>C:/Users/ej199/Documents/GitHub/Advanced-Programming/Advanced Programming Project/Assets/Frameworks/FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>C:/Users/ej199/Documents/GitHub/Advanced-Programming/Advanced Programming Project/Assets/Interpreter/bin/Debug/Assembly-CSharp.dll</HintPath>

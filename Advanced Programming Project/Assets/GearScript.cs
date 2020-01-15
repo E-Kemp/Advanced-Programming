@@ -1,28 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Entity = LevelController.LevelEntity; // Aliasing Level Entities to make coding easier
+using Entity = LevelController.Entity; // Aliasing Level Entities to make coding easier
 
 
 public class GearScript : Entity
 {
-    public Entity TARGET_ENTITY;
     public GameObject GEAR;
     private void Update()
     {
         transform.Rotate(new Vector3(0, 0, 45) * Time.deltaTime);
     }
 
-    public override bool consoleTrigger(string[] args)
+    public override bool trigger(string[] args)
     {
-        CONSOLE.displayMessage("Unsupported method");
-        return false;
+        if (active) // If the gear is active
+        {
+            return true;
+        }
+        else
+        {
+            sendMessage(HOOK + " isn't active!");
+            return false;
+        }
     }
 
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        TARGET_ENTITY.setHookActive();
-        GEAR.SetActive(false);
-        CONSOLE.displayMessage(TARGET_ENTITY.name.ToUpper() + " IS ACTIVE");
+        setHookActive(); // Enable the gear
+        GEAR.SetActive(false); // Remove the gear
+        sendMessage(this.HOOK + " IS ACTIVE");
+        hookIsActive();
     }
 }

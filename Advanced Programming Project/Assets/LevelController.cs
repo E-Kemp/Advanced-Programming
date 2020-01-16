@@ -14,47 +14,11 @@ public class LevelController : MonoBehaviour
     public ConsoleView CONSOLE;
     private List<Entity> TRIG_LIST = new List<Entity>();
 
-    public abstract class Entity : MonoBehaviour
-    {
-        public delegate void MessageHandler(string str);
-        public event MessageHandler message;
-
-        public delegate void ConsoleHandler(string str);
-        public event ConsoleHandler console;
-
-        public delegate Entity GetTargetHandler();
-        public event GetTargetHandler getTarget;
-
-        public delegate bool IsActiveListenerHandler();
-        public event IsActiveListenerHandler isActive;
-
-        public string NAME = ""; // Entity name
-        public string HOOK = ""; // Hook name to use in the console
-        public bool active = false;
-        public bool doorTrigger;
-        //public ConsoleView CONSOLE;
-
-        public abstract bool trigger(string[] args); // Console trigger
-        protected abstract void OnTriggerEnter2D(Collider2D collision);
-        public virtual void setHookActive() { active = true; }
-        public virtual bool checkActive() { return active; }
-
-        //Triggers the message event
-        protected void sendMessage(string str) { message(str); }
-        //Triggers the console message event
-        protected void consoleMessage(string str) { console(str); }
-        //Triggers the getTarget event
-        protected Entity getTargetEnt() { return getTarget(); }
-        //Check if all hooks are now active
-        protected bool hookIsActive() { return isActive(); }
-    }
-
 
     public void Start()
     {
         // Assign event methods
         CONSOLE.scriptEvent += script;
-
         TARGET.message += message;
         TARGET.getTarget += getTarget;
         TARGET.console += console;
@@ -67,23 +31,14 @@ public class LevelController : MonoBehaviour
             ent.isActive += isActive;
         }
 
+
+        //Add the hooks needed to open the door to a separate list
         foreach(var ent in ENT_LIST)
         {
             if (ent.doorTrigger)
                 TRIG_LIST.Add(ent);
         }
     }
-
-    //~LevelController()
-    //{
-    //    TARGET.message += message;
-    //    TARGET.getTarget += getTarget;
-    //    foreach (var ent in ENT_LIST)
-    //    {
-    //        ent.message += message;
-    //        ent.getTarget += getTarget;
-    //    }
-    //}
 
     public Entity getEntity(string hook)
     {
@@ -139,16 +94,29 @@ public class LevelController : MonoBehaviour
 
         #region Parsing and executing
 
-        //FIX THIS BIT
-
-        if (tokenList[tokenList.Count-1].IsOP) // Multiple hooks and one operation
+        if (tokenList[tokenList.Count - 1].IsOP) // Multiple hooks and one operation
         {
             var entList = new List<Entity>();
-            for(int t = 0; t < tokenList.Count-1; t++)
+            for (int t = 0; t + 1 < tokenList.Count; t += 2)
             {
-                var ent = getEntity(Parser.getHook(tokenList[t]));
-                if (ent == null)
+                //Syntax checking
+                if (!(tokenList[t + 1].IsEX || tokenList[t + 1].IsOP))
+                {
+                    CONSOLE.appendConsoleLogLine(string.Format(
+                            "SYNTAX ERROR: {0} can only be proceeded by an expression " +
+                            "(i.e. AND) or an operator (i.e. +/-).",
+                            Lexer.printToken(tokenList[t])));
                     return;
+                }
+                var ent = getEntity(Parser.getVA(tokenList[t]));
+                if (ent == null)
+                {
+                    CONSOLE.appendConsoleLogLine(string.Format(
+                            "SYNTAX ERROR: {0} does not exist.",
+                            Lexer.printToken(tokenList[t])));
+                    return;
+                }
+                    
                 else
                     entList.Add(ent);
             }
@@ -156,23 +124,35 @@ public class LevelController : MonoBehaviour
 
             // If the hooks are triggers
             int trigCount = 0;
-            foreach(var ent in entList)
+            foreach (var ent in entList)
             {
                 if (TRIG_LIST.Contains(ent) && ent.checkActive())
                     trigCount++;
             }
-            if(trigCount == TRIG_LIST.Count)
+            if (trigCount == TRIG_LIST.Count)
             {
                 TARGET.trigger(new string[] { op.ToString() });
                 return;
             }
 
             // If they're not triggers
-            foreach(var ent in entList)
+            foreach (var ent in entList)
             {
-                ent.trigger(new string[] { });
+                if(ent.active)
+                    ent.trigger(new string[] { op.ToString() });
+                else
+                    CONSOLE.appendConsoleLogLine(string.Format(
+                         "SYNTAX ERROR: {0} is not active/doesn't exist, try one of the gears!", ent.HOOK));
+
             }
 
+        }
+        else
+        {
+            CONSOLE.appendConsoleLogLine(string.Format(
+                         "SYNTAX ERROR: Script must be finished with an operator " +
+                         "(i.e. +/-)."));
+            return;
         }
 
         #endregion
@@ -180,6 +160,7 @@ public class LevelController : MonoBehaviour
 
     #endregion
 
+    #region Event methods
 
     public void message(string str)
     {
@@ -205,4 +186,6 @@ public class LevelController : MonoBehaviour
         TARGET.setHookActive();
         return true;
     }
+
+    #endregion
 }

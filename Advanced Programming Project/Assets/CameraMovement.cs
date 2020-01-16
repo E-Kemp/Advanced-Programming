@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+// Small camera movement class to track the player
 public class CameraMovement : MonoBehaviour
 {
 

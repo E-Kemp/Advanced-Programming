@@ -1,21 +1,14 @@
-﻿/// 
-/// ConsoleController Class to manage the console inputs and execute tasks respectively.
-/// With thanks to Eliot Lash for tutorial and original code (heavily edited, this class was very broken at the start)
-/// 
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using System.Text;
-using Inter = Interpreter.Main;
-using Lexer = Interpreter.Lexer;
-using Token = Interpreter.Token;
-using Entity = LevelController.Entity; // Aliasing Level Entities to make coding easier
 
 
-public delegate void CommandHandler(string[] args);
 
 
+
+// ConsoleController Class to manage the console inputs and execute tasks respectively.
+// With thanks to Eliot Lash for tutorial and original code (heavily edited, this class was very broken at the start)
 public class ConsoleController
 {
 
@@ -24,9 +17,6 @@ public class ConsoleController
     public delegate void LogChangedHandler(string[] log);
     public event LogChangedHandler logChanged;
 
-    public delegate void VisibilityChangedHandler(bool visible);
-    public event VisibilityChangedHandler visibilityChanged;
-
     public delegate void MessageChangedHandler(string message);
     public event MessageChangedHandler screenMessage;
 
@@ -34,7 +24,10 @@ public class ConsoleController
     public event ScriptHandler script;
     #endregion
 
-
+    // Delegate used for the command handling
+    public delegate void CommandHandler(string[] args);
+    
+    
     /// Nested class to hold information about each command
     /// command - actual command entered in console
     /// handler - method name in code
@@ -54,36 +47,30 @@ public class ConsoleController
     }
 
 
-
+    // Max size of the command history
     const int scrollbackSize = 20;
 
     Queue<string> scrollback = new Queue<string>(scrollbackSize);
     Stack<string> commandHistory = new Stack<string>();
     Dictionary<string, CommandRegistration> commands = new Dictionary<string, CommandRegistration>();
 
-    // List of hooks
     public string[] log { get; private set; }
-
-    const string repeatCmdName = "!!";
 
     public ConsoleController()
     {
+        appendLogLine("Welcome to the game! Type 'help' for a list of commands and other help.");
         registerCommand("babble", babble, "Example command that demonstrates how to parse arguments. babble [word] [# of times to repeat]");
-        registerCommand("echo", echo, "Echoes arguments back as array (for testing argument parser)");
         registerCommand("help", help, "Print this help.");
-        registerCommand(repeatCmdName, repeatCommand, "Repeat last command.");
         registerCommand("reload", reload, "Reload game.");
-        registerCommand("resetprefs", resetPrefs, "Reset & saves PlayerPrefs.");
-        registerCommand("history", history, "Prints the entire history of this session into the console.");
     }
 
 
-    void registerCommand(string command, CommandHandler handler, string help)
+    private void registerCommand(string command, CommandHandler handler, string help)
     {
         commands.Add(command, new CommandRegistration(command, handler, help));
     }
-
-
+    
+    // Add a new line to the console log
     public void appendLogLine(string line)
     {
         Debug.Log(line);
@@ -95,18 +82,17 @@ public class ConsoleController
         scrollback.Enqueue(line);
 
         log = scrollback.ToArray();
-        if (logChanged != null)
-        {
-            logChanged(log);
-        }
+
+        logChanged?.Invoke(log);
     }
     
+    // Display a message in-game
     public void displayMessage(string msg)
     {
         screenMessage(msg);
     }
 
-
+    // Run a command entered into the console
     public void runCommandString(string commandString)
     {
         appendLogLine("$ " + commandString);
@@ -144,7 +130,7 @@ public class ConsoleController
         CommandRegistration reg = null;
         if (!commands.ContainsKey(command))
         {
-            appendLogLine(string.Format("Unknown command '{0}', type 'help' for list.", command));
+            appendLogLine(string.Format("Unknown command '{0}', type 'help' for help.", command));
         }
         else
         {
@@ -173,22 +159,6 @@ public class ConsoleController
     {
         appendLogLine("Run a command with 'command argument1, argument2, ...'");
     }
-
-    public void echo(string[] args)
-    {
-        if (args != null)
-        {
-            string output = "'" + args[0];
-            for(int i = 1; i < args.Length; i++)
-            {
-                output += " " + args[i];
-            }
-            output += "'";
-            appendLogLine(output);
-            screenMessage(output);
-        }
-        else appendLogLine("No arguments to echo!");
-    }
     
     public void help(string[] args)
     {
@@ -197,7 +167,9 @@ public class ConsoleController
             foreach(CommandRegistration com in commands.Values)
             {
                 appendLogLine(com.command + ": " + com.help);
+                
             }
+            appendLogLine("To run a script, type the hook (i.e. GEAR) followed by an operator or expression (i.e. +/- or AND)");
         }
         if (args.Length == 1)
         {
@@ -208,36 +180,13 @@ public class ConsoleController
             }
         }
         else appendLogLine("Invalid arguments!");
+        
     }
-    
-    public void repeatCommand(string[] args) 
-    {
-        runCommandString(commandHistory.Peek());
-    }
-
 
     public void reload(string[] args)
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-
-
-    public void resetPrefs(string[] args)
-    {
-        PlayerPrefs.DeleteAll();
-        PlayerPrefs.Save();
-    }
-
-
-    public void history(string[] args)
-    {
-        Stack<string> output = commandHistory;
-        foreach(string str in output)
-        {
-            appendLogLine(str);
-        }
-    }
-
 
     #endregion
 

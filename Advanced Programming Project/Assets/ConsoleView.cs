@@ -1,15 +1,12 @@
-﻿/// 
-/// ConsoleView Class to control the view aspects fo the console.
-/// With thanks to Eliot Lash for tutorial and original code (heavily edited)
-/// 
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using Entity = LevelController.Entity; // Aliasing Level Entities to make coding easier
 
+// ConsoleView Class to control the view aspects fo the console.
+// With thanks to Eliot Lash for tutorial and initial code (heavily edited)
 public class ConsoleView : MonoBehaviour
 {
     public delegate void ScriptHandler(string str);
@@ -38,12 +35,6 @@ public class ConsoleView : MonoBehaviour
         VIEW_CONTAINER.SetActive(false);
     }
 
-    ~ConsoleView()
-    {
-        CONTROLLER.logChanged += onLogChanged;
-        CONTROLLER.screenMessage += displayMessage;
-        CONTROLLER.script += script;
-    }
 
     void Update()
     {
@@ -90,7 +81,7 @@ public class ConsoleView : MonoBehaviour
 
         yield return new WaitForSeconds(5); // Wait 5 seconds
 
-        for (float i = 1f; i >= 0f; i -= 0.05f)
+        for (float i = 1f; i >= -0.05f; i -= 0.05f)
         {
             MESSAGE_BOX.color = new Color(PINK.r, PINK.g, PINK.b, i);
             yield return new WaitForFixedUpdate();

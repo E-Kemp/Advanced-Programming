@@ -67,6 +67,7 @@
     <Compile Include="Assets\ConsoleController.cs" />
     <Compile Include="Assets\ConsoleView.cs" />
     <Compile Include="Assets\DoorScript.cs" />
+    <Compile Include="Assets\Entity.cs" />
     <Compile Include="Assets\GearLightScript.cs" />
     <Compile Include="Assets\GearScript.cs" />
     <Compile Include="Assets\LevelController.cs" />

@@ -482,6 +482,11 @@ PrefabInstance:
       propertyPath: active
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6185730938061634208, guid: e6f4ca0cdcd87cc418716b0a564fccaf,
+        type: 3}
+      propertyPath: doorTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5013574510257478539, guid: e6f4ca0cdcd87cc418716b0a564fccaf,
         type: 3}
       propertyPath: m_Name
@@ -2225,6 +2230,11 @@ PrefabInstance:
         type: 3}
       propertyPath: HOOK
       value: GEAR1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6185730938061634208, guid: e6f4ca0cdcd87cc418716b0a564fccaf,
+        type: 3}
+      propertyPath: doorTrigger
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5013574510257478539, guid: e6f4ca0cdcd87cc418716b0a564fccaf,
         type: 3}

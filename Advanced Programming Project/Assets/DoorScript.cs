@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DoorScript : LevelController.Entity
+// Door script to control the door to the next level
+public class DoorScript : Entity
 {
     public GameObject DOOR1, DOOR2, DOOR3;
     public BoxCollider2D COLLIDER;

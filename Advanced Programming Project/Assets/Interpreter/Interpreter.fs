@@ -8,7 +8,6 @@ open System.Text.RegularExpressions
 type Operator =
     | ADD
     | SUBTRACT
-
 type Value =
     | HOOK of string
     | START
@@ -20,14 +19,6 @@ type Token =
     | VA of Value
     | EX of Expr
     | NULL
-
-
-type Tree =
-    | Node1 of Node1
-    | Node2 of Node2
-    | Leaf of Token
-and Node1 = { token:Token; child:Tree }
-and Node2 = { token:Token; lhs:Tree; rhs:Tree }
 
 (*
 Lexer module to tokenise a given string of code form the game
@@ -61,7 +52,7 @@ module Lexer =
                                                 tokenise(str.[1..], tokenList)
                                 
 
-
+    // Prints the token as a string, not the value of the token itself
     let printToken token =
         match token with
             | OP(ADD) -> "(ADD)"
@@ -110,43 +101,27 @@ module Parser =
         else
             false
 
-    let getHook token =
-        match token with 
-        | Token.VA(HOOK(x)) -> x
-        | _ -> ""
-
+    // Get the operator as a boolean
     let getOP token =
         match token with
         | Token.OP(ADD) -> true
         | Token.OP(SUBTRACT) -> false
         | _ -> false
 
+    let getEX token =
+        match token with
+        | Token.EX(AND) -> "AND"
+
+    // Get the string from the hook
+    let getVA token =
+        match token with 
+        | Token.VA(HOOK(x)) -> x
+        | Token.VA(START) -> "("
+        | Token.VA(END) -> ")"
+        | _ -> ""
 
 
-    (*
-    AST functions
-    (Leave this for now, move on to execution)
-    *)
-    (*
-    let rec parseTree tokens =
-        let rec buildTree tokens =
-            try // Just in case we massively screw up
-                if tokens |> List.exists (fun a -> match a with | EX(_) -> true | _ -> false) then
-                    let newpos = tokens |> List.findIndex (fun a -> match a with | EX(_) -> true | _ -> false)
-                    Node2{token=EX(AND); lhs=buildTree tokens.[..newpos]; rhs=buildTree tokens.[newpos..]}
-                
-                elif tokens |> List.exists (fun a -> match a with | OP(_) -> true | _ -> false) then
-                    let newpos = tokens |> List.findIndex (fun a -> a = EX(AND))
-                    Node1{token=EX(AND); child=buildTree tokens.[newpos..]}
-                
-                //elif 
-                
-                else Leaf(NULL)
-            with 
-                | :? System.Exception -> printfn "Incorrect Syntax!!"; Leaf(NULL)
-        buildTree(tokens)
-        *)
-
+    
 
 
 (*
@@ -174,9 +149,3 @@ module Main =
         match interpret str hooks triggers with
             | Some(x) -> x
             | None -> NULL :: List.empty<Token>
-        
-        //(Lexer.printTokens tokens) 
-        //+ "\n" 
-        //+ (ents 
-        //    |> List.map<(string * bool), string> (fun (a,_) -> a)
-        //    |> List.fold (+) " ")

@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Entity = LevelController.Entity; // Aliasing Level Entities to make coding easier
-
 
 public class LightPuzzleScript : Entity
 {
@@ -26,7 +24,7 @@ public class LightPuzzleScript : Entity
                 return;
             }
             setHookActive();
-            sendMessage("Puzzle complete!");
+            sendMessage("Puzzle complete! Use hook PUZZLE to open the door.");
             hookIsActive();
     }
 

@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Entity = LevelController.Entity; // Aliasing Level Entities to make coding easier
 
-
+// Gear script that can trigger a hook elsewhere
 public class GearScript : Entity
 {
     public GameObject GEAR;
